@@ -12,6 +12,7 @@ class MainController extends Controller {
   async checkLogin() {
     const user = this.ctx.request.body.name;
     const password = md5password(this.ctx.request.body.password);
+    // console.log(user, password)
 
     // 沒有的話創建新帳號
     const checkSql = `
