@@ -43,7 +43,6 @@ class HomeController extends Controller {
 
   async getArticleList() {
     const { offset = 0, size = 2 } = this.ctx.query;
-    const count = await this.app.mysql.query('SELECT COUNT(a.id) FROM article a WHERE a.release_time IS NOT NULL;');
     const sql = `      
       SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
       IF(COUNT(l.id),JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
@@ -58,7 +57,6 @@ class HomeController extends Controller {
     `;
     const result = await this.app.mysql.query(sql);
     this.ctx.body = {
-      count,
       data: result,
     };
   }

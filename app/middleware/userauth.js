@@ -38,7 +38,7 @@ module.exports = app => {
       // 將圖片進行轉存
       const imgResult = await ctx.curl(image);
       fs.writeFileSync(path.join('uploads/avatar/' + newResult.insertId), imgResult.data);
-      const avatarUrl = `http://localhost:7001/user/avatar/${newResult.insertId}`;
+      const avatarUrl = `/user/avatar/${newResult.insertId}`;
       const uploadSql = `
         UPDATE user SET avatar_url = '${avatarUrl}' WHERE id = ${newResult.insertId};
       `;

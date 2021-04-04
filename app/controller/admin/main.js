@@ -43,6 +43,11 @@ class MainController extends Controller {
     }
   }
 
+  async logout() {
+    this.ctx.session.openId = null;
+    this.ctx.body = { data: 'success' };
+  }
+
   async getVisitsStatistics() {
     const sql = `
       SELECT d.days, IFNULL( v.count, 0) count

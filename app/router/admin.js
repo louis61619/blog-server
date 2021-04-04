@@ -5,6 +5,7 @@ module.exports = app => {
   const adminauth = app.middleware.adminauth();
   router.get('/admin/index', controller.admin.main.index);
   router.post('/admin/checkOpenId', controller.admin.main.checkLogin);
+  router.post('/admin/logout', controller.admin.main.logout);
 
   router.get('/admin/getInfo', adminauth, controller.admin.main.getAdminInfo);
   router.post('/admin/editInfo', adminauth, controller.admin.main.editAdminInfo);
