@@ -85,7 +85,7 @@ class UserController extends Controller {
 
   async favoriteList() {
     const { id } = this.ctx.token;
-    let { offset = 0, size = 2 } = this.ctx.query;
+    let { offset = 0, size = 8 } = this.ctx.query;
     if (size > 8) size = 8;
     const sql = `
       SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
@@ -93,7 +93,7 @@ class UserController extends Controller {
       FROM favorite f
       LEFT JOIN article a ON f.article_id = a.id
       WHERE f.user_id = ${id}
-      ORDER BY f.article_id DESC
+      ORDER BY f.createAt DESC
       LIMIT ${offset}, ${size};
     `;
     const result = await this.app.mysql.query(sql);
@@ -214,15 +214,14 @@ class UserController extends Controller {
 
   async notice() {
     const { id } = this.ctx.token;
-    let { offset = 0, size = 2 } = this.ctx.query;
+    let { offset = 0, size = 8 } = this.ctx.query;
     if (size > 8) size = 8;
     const sql = `
       SELECT c.id, c.content, c.article_id articleId, c.user_id userId, c.comment_id commentId, c.createAt createTime, c.updateAt updateTime,
       c1.id mainId, c1.content mainContent
       FROM comment c
-      LEFT JOIN comment ci ON ci.id = c.id AND ci.user_id = ${id} AND c.comment_id IS NULL
       LEFT JOIN comment c1 ON c.comment_id = c1.id
-      WHERE c.comment_id IS NOT NULL
+      WHERE c.comment_id IS NOT NULL AND c1.user_id = ${id}
       ORDER BY c.updateAt
       LIMIT ${offset}, ${size};
     `;

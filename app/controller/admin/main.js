@@ -11,7 +11,7 @@ class MainController extends Controller {
 
   async checkLogin() {
     const user = this.ctx.request.body.name;
-    const password = md5password(this.ctx.request.body.password);
+    const password = this.ctx.request.body.password ? md5password(this.ctx.request.body.password) : '';
     // console.log(user, password)
 
     // 沒有的話創建新帳號
@@ -173,7 +173,8 @@ class MainController extends Controller {
   }
 
   async getArticleList() {
-    const { offset = 0, size = 8 } = this.ctx.query;
+    let { offset = 0, size = 8 } = this.ctx.query;
+    if (size > 8) size = 8;
     const countsql = 'SELECT COUNT(id) count FROM article;';
     const sql = `      
       SELECT a.id id, a.title, a.introduce, a.article_content context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,

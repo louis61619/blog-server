@@ -42,7 +42,8 @@ class HomeController extends Controller {
   }
 
   async getArticleList() {
-    const { offset = 0, size = 2 } = this.ctx.query;
+    let { offset = 0, size = 8 } = this.ctx.query;
+    if (size > 8) size = 8;
     const sql = `      
       SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
       IF(COUNT(l.id),JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
@@ -65,7 +66,7 @@ class HomeController extends Controller {
     const id = this.ctx.query.id;
     // 瀏覽人次＋1
     const addSql = `
-      UPDATE article SET view_count = view_count + 1 WHERE id = 1;
+      UPDATE article SET view_count = view_count + 1 WHERE id = ${id};
     `;
     await this.app.mysql.query(addSql);
     const sql = `
@@ -112,7 +113,7 @@ class HomeController extends Controller {
 
   async getArticleByLabelId() {
     const id = this.ctx.params.id;
-    let { offset = 0, size = 2 } = this.ctx.query;
+    let { offset = 0, size = 8 } = this.ctx.query;
     if (size > 8) size = 8;
     const sql = `
       SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
