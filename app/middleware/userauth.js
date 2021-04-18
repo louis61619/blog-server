@@ -7,8 +7,13 @@ module.exports = app => {
   const verifyLogin = async (ctx, next) => {
     // 拿到用戶的email
     const { email, name, image, token } = ctx.request.body;
-    console.log(token);
-    console.log(app.jwt.verify(token, app.config.jwt.secret));
+    // console.log(token);
+    const parseToken = app.jwt.verify(token, app.config.jwt.secret);
+
+    if (parseToken.email !== email) {
+      ctx.body = { data: 'is not login' };
+      return;
+    }
 
     if (!email) {
       ctx.body = { data: 'is not login' };
