@@ -184,6 +184,31 @@ class MainController extends Controller {
       LEFT JOIN article_label al ON a.id = al.article_id
       LEFT JOIN label l ON al.label_id = l.id
       GROUP BY a.id
+      ORDER BY a.id DESC
+      LIMIT ${offset}, ${size};
+    `;
+    const result = await this.app.mysql.query(sql);
+    const [{ count }] = await this.app.mysql.query(countsql);
+    this.ctx.body = {
+      data: result,
+      count,
+    };
+  }
+
+  async searchArticleList() {
+    let { offset = 0, size = 8, keyword } = this.ctx.query;
+    if (size > 8) size = 8;
+    const countsql = `SELECT COUNT(id) count FROM article a WHERE a.title LIKE '%${keyword}%';`;
+    const sql = `      
+      SELECT a.id id, a.title, a.introduce, a.article_content context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
+      IF(COUNT(l.id),JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
+      (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images
+      FROM article a
+      LEFT JOIN article_label al ON a.id = al.article_id
+      LEFT JOIN label l ON al.label_id = l.id
+      WHERE a.title LIKE '%${keyword}%'
+      GROUP BY a.id
+      ORDER BY a.id DESC
       LIMIT ${offset}, ${size};
     `;
     const result = await this.app.mysql.query(sql);

@@ -15,6 +15,8 @@ module.exports = app => {
   router.post('/admin/addLabel', adminauth, controller.admin.main.addLabel);
 
   router.get('/admin/getArticleList', adminauth, controller.admin.main.getArticleList);
+  router.get('/admin/searchArticleList', adminauth, controller.admin.main.searchArticleList);
+
   router.get('/admin/getMemberList', adminauth, controller.admin.main.getMemberList);
 
   router.get('/admin/getArticleById/:id', adminauth, controller.admin.main.getArticleById);

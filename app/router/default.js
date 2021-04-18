@@ -6,6 +6,10 @@ module.exports = app => {
   router.get('/default/author', controller.admin.main.getAdminInfo);
 
   router.patch('/default/addVistis', controller.default.home.addVistis);
+  router.get('/default/getStaticList', controller.default.home.getStaticList);
+
+  router.get('/default/searchArticleTitle', controller.default.home.searchArticleTitle);
+  router.get('/default/searchArticleLabel', controller.default.home.searchArticleLabel);
 
   router.get('/default/getTopRecommend', controller.default.home.getTopRecommend);
   router.get('/default/getArticleList', controller.default.home.getArticleList);

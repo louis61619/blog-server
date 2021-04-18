@@ -41,6 +41,18 @@ class HomeController extends Controller {
     };
   }
 
+  async getStaticList() {
+    const sql = `
+      SELECT a.id
+      FROM article a
+      WHERE a.release_time IS NOT NULL;
+    `;
+    const result = await this.app.mysql.query(sql);
+    this.ctx.body = {
+      data: result,
+    };
+  }
+
   async getArticleList() {
     let { offset = 0, size = 8 } = this.ctx.query;
     if (size > 8) size = 8;
@@ -62,6 +74,51 @@ class HomeController extends Controller {
     };
   }
 
+  async searchArticleTitle() {
+    let { offset = 0, size = 8, keyword } = this.ctx.query;
+    if (size > 8) size = 8;
+    const sql = `      
+      SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
+      IF(COUNT(l.id),JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
+      (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images
+      FROM article a
+      LEFT JOIN article_label al ON a.id = al.article_id
+      LEFT JOIN label l ON al.label_id = l.id
+      WHERE a.release_time IS NOT NULL AND a.title LIKE '%${keyword}%'
+      GROUP BY a.id
+      ORDER BY release_time DESC
+      LIMIT ${offset}, ${size};
+    `;
+    const result = await this.app.mysql.query(sql);
+    this.ctx.body = {
+      data: result,
+    };
+  }
+
+  async searchArticleLabel() {
+    let { offset = 0, size = 8, keyword } = this.ctx.query;
+    if (size > 8) size = 8;
+    const sql = `      
+      SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
+      (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', ls.id, 'name', ls.name)) 
+      FROM label ls 
+      LEFT JOIN article_label als ON ls.id = als.label_id 
+      LEFT JOIN article ar ON ar.id = als.article_id 
+      WHERE a.id = ar.id
+      ) labels,
+      (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images
+      FROM label l
+      LEFT JOIN article_label al ON l.id = al.label_id
+      LEFT JOIN article a ON al.article_id = a.id
+      WHERE a.release_time IS NOT NULL AND l.name LIKE '%${keyword}%'
+      LIMIT ${offset}, ${size};
+    `;
+    const result = await this.app.mysql.query(sql);
+    this.ctx.body = {
+      data: result,
+    };
+  }
+
   async getArticleById() {
     const id = this.ctx.query.id;
     // 瀏覽人次＋1
@@ -70,7 +127,7 @@ class HomeController extends Controller {
     `;
     await this.app.mysql.query(addSql);
     const sql = `
-      SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
+      SELECT a.id id, a.title, a.introduce, a.article_content context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
       IF(COUNT(l.id),JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) labels,
         (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images,
         (SELECT IF(COUNT(c.id), JSON_ARRAYAGG(
