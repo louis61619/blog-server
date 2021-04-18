@@ -99,18 +99,19 @@ class HomeController extends Controller {
     let { offset = 0, size = 8, keyword } = this.ctx.query;
     if (size > 8) size = 8;
     const sql = `      
-      SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
+      SELECT DISTINCT a.id, a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt,
       (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', ls.id, 'name', ls.name)) 
       FROM label ls 
       LEFT JOIN article_label als ON ls.id = als.label_id 
       LEFT JOIN article ar ON ar.id = als.article_id 
       WHERE a.id = ar.id
       ) labels,
-      (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images
-      FROM label l
-      LEFT JOIN article_label al ON l.id = al.label_id
-      LEFT JOIN article a ON al.article_id = a.id
-      WHERE a.release_time IS NOT NULL AND l.name LIKE '%${keyword}%'
+        (SELECT JSON_ARRAYAGG(CONCAT('${this.app.config.myHost}/images/',file.filename)) FROM file WHERE a.id = file.article_id) images
+        FROM label l
+        LEFT JOIN article_label al ON l.id = al.label_id
+        LEFT JOIN article a ON al.article_id = a.id
+        WHERE a.release_time IS NOT NULL AND l.name LIKE '%${keyword}%'
+        ORDER BY releaseTime DESC
       LIMIT ${offset}, ${size};
     `;
     const result = await this.app.mysql.query(sql);
