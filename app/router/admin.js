@@ -33,5 +33,6 @@ module.exports = app => {
   router.patch('/admin/addBlock', adminauth, controller.admin.main.addBlock);
 
   router.post('/admin/upload', adminauth, controller.admin.main.uploadPicture);
+  router.delete('/admin/deletePicture', adminauth, controller.admin.main.deletePicture);
   router.get('/admin/getVisitsStatistics', adminauth, controller.admin.main.getVisitsStatistics);
 };

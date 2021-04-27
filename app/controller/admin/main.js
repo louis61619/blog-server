@@ -262,6 +262,19 @@ class MainController extends Controller {
     };
   }
 
+  async deletePicture() {
+    const imgId = this.ctx.query.imgId;
+    const sql = `
+      DELETE FROM file WHERE filename = '${imgId}';
+    `;
+    fs.unlinkSync(path.join('uploads/picture/' + imgId));
+    const result = await this.app.mysql.query(sql);
+    const delSuccess = result.affectedRows === 1;
+    this.ctx.body = {
+      isSuccess: delSuccess,
+    };
+  }
+
   async comment() {
     const { offset = 0, size = 8 } = this.ctx.query;
     const countsql = 'SELECT COUNT(id) count FROM comment c WHERE c.comment_id IS NULL AND c.user_id NOT IN (SELECT u.id FROM user u WHERE u.block = 1);';
