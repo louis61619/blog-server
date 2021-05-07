@@ -222,7 +222,7 @@ class UserController extends Controller {
       FROM comment c
       LEFT JOIN comment c1 ON c.comment_id = c1.id
       WHERE c.comment_id IS NOT NULL AND c1.user_id = ${id}
-      ORDER BY c.updateAt
+      ORDER BY c.updateAt DESC
       LIMIT ${offset}, ${size};
     `;
     const result = await this.app.mysql.query(sql);
