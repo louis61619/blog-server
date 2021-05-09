@@ -13,7 +13,7 @@ run/
 typings/
 .nyc_output/
 .env
-config/config.default.js
+config/config.local.js
 *.pem
 *.sh
 uploads
