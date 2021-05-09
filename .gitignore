@@ -16,4 +16,3 @@ typings/
 config/config.local.js
 *.pem
 *.sh
-uploads
