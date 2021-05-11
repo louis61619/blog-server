@@ -14,13 +14,6 @@
  Date: 09/05/2021 12:47:29
 */
 
-SHOW DATABASES;
-CREATE DATABASE react_blog;
-USE react_blog;
-
-CREATE USER 'root'@'%' IDENTIFIED BY 'root'; 
-GRANT ALL ON *.* TO 'root'@'%'; 
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
