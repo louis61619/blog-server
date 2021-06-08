@@ -267,7 +267,11 @@ class MainController extends Controller {
     const sql = `
       DELETE FROM file WHERE filename = '${imgId}';
     `;
-    fs.unlinkSync(path.join('uploads/picture/' + imgId));
+    try {
+      fs.unlinkSync(path.join('uploads/picture/' + imgId));
+    } catch (error) {
+      console.log(error);
+    }
     const result = await this.app.mysql.query(sql);
     const delSuccess = result.affectedRows === 1;
     this.ctx.body = {
