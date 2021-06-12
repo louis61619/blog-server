@@ -2,7 +2,7 @@
 
 module.exports = app => {
   const { router, controller } = app;
-  router.get('/default/index', controller.default.home.index);
+  router.get('/default/sitemap', controller.default.home.index);
   router.get('/default/author', controller.admin.main.getAdminInfo);
 
   router.patch('/default/addVistis', controller.default.home.addVistis);

@@ -5,7 +5,12 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
   async index() {
-    const result = await this.app.mysql.get('blog_content', {});
+    const sql = `
+      SELECT a.id id, a.title, a.introduce, left(a.article_content, 200) context, a.view_count, a.like_count, a.release_time releaseTime, a.updateAt, a.createAt
+      FROM article a
+      WHERE a.release_time IS NOT NULL
+    `;
+    const result = await this.app.mysql.query(sql);
     this.ctx.body = result;
   }
 
