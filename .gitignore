@@ -14,5 +14,6 @@ typings/
 .nyc_output/
 .env
 config/config.local.js
+config/config.prod.js
 *.pem
 *.sh
