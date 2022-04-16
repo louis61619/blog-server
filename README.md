@@ -2,8 +2,6 @@
 
 這是一個 restful 風格的 API 接口，作為部落格的服務端使用，使用 Egg.js 搭建，你的星星是我最大的鼓勵
 
-部落格地址：https://mycoderland.tw
-
 前台源碼：https://github.com/louis61619/blog-frontstage.git
 
 後台源碼：https://github.com/louis61619/blog-backstage.git
