@@ -1,6 +1,6 @@
 /* eslint valid-jsdoc: "off" */
-
 'use strict';
+require('dotenv').config();
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -13,7 +13,7 @@ module.exports = appInfo => {
   const config = exports = {};
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '0000';
+  config.keys = appInfo.name + process.env.SECRET_KEY;
 
   // add your middleware config here
   config.middleware = [];
@@ -21,22 +21,22 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-    myHost: 'http://localhost:7001',
+    myHost: process.env.SERVER_URL,
   };
 
   config.mysql = {
     // database configuration
     client: {
       // host
-      host: '0.0.0.0',
+      host: process.env.DB_HOST,
       // port
-      port: '3310',
+      port: process.env.DB_PORT,
       // username
-      user: 'root',
+      user: process.env.DB_USERNAME,
       // password
-      password: 'root',
+      password: process.env.DB_PASSWORD,
       // database
-      database: 'react_blog',
+      database: process.env.DB,
     },
     // load into app, default is open
     app: true,
@@ -63,7 +63,13 @@ module.exports = appInfo => {
   };
 
   config.jwt = {
-    secret: '0000',
+    secret: process.env.SECRET_KEY,
+  };
+
+  config.cluster = {
+    listen: {
+      port: Number(process.env.START_PORT),
+    },
   };
 
   // config.session = {
